@@ -31,7 +31,7 @@ const onSelection = items => {
 const onClick = () => {
     const type = settings.type;
     let name = settings.packageName;
-    const extension = type === 'shell-zip' ? 'zip' : 'tar';
+    const extension = type === 'python3-script' ? 'py' : (type === 'shell-zip' ? 'zip' : 'tar');
 
     if (!name) {
         if (selectedItems.length === 1) {

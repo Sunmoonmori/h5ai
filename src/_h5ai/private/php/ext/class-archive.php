@@ -41,8 +41,42 @@ class Archive {
             return $this->shell_cmd(Archive::$TAR_PASSTHRU_CMD);
         } elseif ($type === 'shell-zip') {
             return $this->shell_cmd(Archive::$ZIP_PASSTHRU_CMD);
+        } elseif ($type === 'python3-script') {
+            return $this->create_python3_script();
         }
         return false;
+    }
+
+    private function create_python3_script() {
+        $files = [];
+        foreach($this->files as $file) {
+            $files[$file] = str_replace('\'', '\\\'', $file);
+        }
+        $str = '\'' . (count($this->files) ? implode('\', \'', $files) : '') . '\'';
+        echo <<<PY
+# coding:utf-8
+
+from urllib.request import urlretrieve
+from urllib.parse import quote
+import os
+
+base = 'http://{$_SERVER['HTTP_HOST']}{$this->context->get_request()->query('baseHref')}'
+a = [{$str}]
+
+for i in a:
+    print('start download:', i)
+    try:
+        p = './' + i[0:i.rindex('/')]
+        if not os.path.exists(p):
+            os.makedirs(p)
+            print('create path:', p)
+    except ValueError:
+        pass
+    urlretrieve(base + quote(i).replace('%2f', '/'), i, lambda a, b, c:print('\\r' + '%.2f%%' % (100 * a * b / c), end=''))
+    print('\\rcomplete')
+
+PY;
+        return true;
     }
 
     private function shell_cmd($cmd) {

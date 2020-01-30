@@ -122,7 +122,7 @@
     Enable packaged download of selected entries.
     To select files the "select"-extension needs to be enabled.
 
-    - type: string, "php-tar", "shell-tar" or "shell-zip"
+    - type: string, "php-tar", "shell-tar", "shell-zip" or "python3-script"
     - packageName: string, basename of the download package, null for current filename or foldername
     - alwaysVisible: boolean, always show download button (defaults to download the current folder)
     */
